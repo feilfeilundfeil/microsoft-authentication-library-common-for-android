@@ -29,8 +29,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.customtabs.CustomTabsService;
+import androidx.annotation.NonNull;
+import androidx.browser.customtabs.CustomTabsService;
 
 import com.microsoft.identity.common.exception.ClientException;
 import com.microsoft.identity.common.exception.ErrorStrings;

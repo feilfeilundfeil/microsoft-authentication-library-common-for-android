@@ -24,10 +24,12 @@ package com.microsoft.identity.common.internal.ui.browser;
 
 import android.app.Activity;
 import android.content.ComponentName;
-import android.support.annotation.NonNull;
-import android.support.customtabs.CustomTabsClient;
-import android.support.customtabs.CustomTabsIntent;
-import android.support.customtabs.CustomTabsServiceConnection;
+import android.content.Intent;
+
+import androidx.annotation.NonNull;
+import androidx.browser.customtabs.CustomTabsClient;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.browser.customtabs.CustomTabsServiceConnection;
 
 import com.microsoft.identity.common.internal.logging.Logger;
 
@@ -108,6 +110,7 @@ public class CustomTabsManager {
         final CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder(getClient().newSession(null));
         mCustomTabsIntent = builder.setShowTitle(true).build();
         mCustomTabsIntent.intent.setPackage(browserPackage);
+        mCustomTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
     }
 
     /**

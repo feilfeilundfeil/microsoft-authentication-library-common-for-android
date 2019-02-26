@@ -28,8 +28,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.webkit.ClientCertRequest;
 import android.webkit.WebResourceRequest;
@@ -91,7 +91,7 @@ public class AzureActiveDirectoryWebViewClient extends OAuth2WebViewClient {
         }
         return handleUrl(view, url);
     }
-
+/*
     /**
      * Give the host application a chance to take over the control when a new url is about to be loaded in the current WebView.
      * This method is added in API level 24.
@@ -99,14 +99,14 @@ public class AzureActiveDirectoryWebViewClient extends OAuth2WebViewClient {
      * @param view    The WebView that is initiating the callback.
      * @param request Object containing the details of the request.
      * @return return true means the host application handles the url, while return false means the current WebView handles the url.
-     */
+     *//*
     @Override
     @RequiresApi(Build.VERSION_CODES.N)
     public boolean shouldOverrideUrlLoading(final WebView view, final WebResourceRequest request) {
         final Uri requestUrl = request.getUrl();
         return handleUrl(view, requestUrl.toString());
     }
-
+*/
     private boolean handleUrl(final WebView view, final String url) {
         final String formattedURL = url.toLowerCase(Locale.US);
 

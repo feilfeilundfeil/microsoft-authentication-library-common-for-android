@@ -22,7 +22,7 @@
 // THE SOFTWARE.
 package com.microsoft.identity.common.internal.ui.webview.challengehandlers;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.webkit.HttpAuthHandler;
 import android.webkit.WebView;
 

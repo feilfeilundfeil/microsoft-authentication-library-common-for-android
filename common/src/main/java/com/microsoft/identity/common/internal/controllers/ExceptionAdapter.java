@@ -26,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.gson.JsonSyntaxException;
+import com.microsoft.identity.common.adal.internal.AuthenticationConstants;
 import com.microsoft.identity.common.exception.ArgumentException;
 import com.microsoft.identity.common.exception.BaseException;
 import com.microsoft.identity.common.exception.ClientException;
@@ -39,6 +40,7 @@ import com.microsoft.identity.common.internal.providers.oauth2.AuthorizationResu
 import com.microsoft.identity.common.internal.providers.oauth2.TokenErrorResponse;
 import com.microsoft.identity.common.internal.providers.oauth2.TokenResult;
 import com.microsoft.identity.common.internal.result.AcquireTokenResult;
+import com.microsoft.identity.common.internal.telemetry.CliTelemInfo;
 import com.microsoft.identity.common.internal.util.HeaderSerializationUtil;
 import com.microsoft.identity.common.internal.util.StringUtil;
 
@@ -85,16 +87,22 @@ public class ExceptionAdapter {
         if (tokenResult != null && !tokenResult.getSuccess()) {
             tokenErrorResponse = tokenResult.getErrorResponse();
 
-            if (tokenErrorResponse.getError().equalsIgnoreCase(UiRequiredException.INVALID_GRANT)) {
+            if (tokenErrorResponse.getError().equalsIgnoreCase(AuthenticationConstants.OAuth2ErrorCode.INVALID_GRANT)) {
                 Logger.warn(
                         TAG + methodName,
                         "Received invalid_grant"
                 );
-                return new UiRequiredException(
+                final UiRequiredException uiRequiredException = new UiRequiredException(
                         tokenErrorResponse.getError(),
-                        tokenErrorResponse.getErrorDescription(),
-                        null
+                        tokenErrorResponse.getSubError(),
+                        tokenErrorResponse.getErrorDescription()
                 );
+
+
+
+                applyCliTelemInfo(tokenResult, uiRequiredException);
+
+                return uiRequiredException;
             }
 
             ServiceException outErr = null;
@@ -120,6 +128,8 @@ public class ExceptionAdapter {
                 );
             }
 
+            applyCliTelemInfo(tokenResult, outErr);
+
             applyHttpErrorResponseData(
                     outErr,
                     tokenErrorResponse.getStatusCode(),
@@ -131,6 +141,17 @@ public class ExceptionAdapter {
         }
 
         return null;
+    }
+
+    private static void applyCliTelemInfo(@NonNull final TokenResult tokenResult,
+                                          @NonNull final BaseException outErr) {
+        if (null != tokenResult.getCliTelemInfo()) {
+            final CliTelemInfo cliTelemInfo = tokenResult.getCliTelemInfo();
+            outErr.setSpeRing(cliTelemInfo.getSpeRing());
+            outErr.setRefreshTokenAge(cliTelemInfo.getRefreshTokenAge());
+            outErr.setCliTelemErrorCode(cliTelemInfo.getServerErrorCode());
+            outErr.setCliTelemSubErrorCode(cliTelemInfo.getServerSubErrorCode());
+        }
     }
 
     private static void applyHttpErrorResponseData(@NonNull final ServiceException targetException,
@@ -189,6 +210,7 @@ public class ExceptionAdapter {
             UiRequiredException uiRequiredException = ((UiRequiredException) e);
             msalException = new UiRequiredException(
                     uiRequiredException.getErrorCode(),
+                    uiRequiredException.getSubErrorCode(),
                     uiRequiredException.getMessage()
             );
         }

@@ -196,7 +196,7 @@ public class SharedPreferencesAccountCredentialCache extends AbstractAccountCred
 
         for (Map.Entry<String, ?> cacheValue : cacheValues.entrySet()) {
             final String cacheKey = cacheValue.getKey();
-            if (isAccount(cacheKey)) {
+            if (isAccount(cacheKey) && cacheValue.getValue() != null) {
                 final AccountRecord account = mCacheValueDelegate.fromCacheValue(
                         cacheValue.getValue().toString(),
                         AccountRecord.class

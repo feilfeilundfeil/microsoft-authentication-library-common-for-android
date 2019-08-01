@@ -196,7 +196,7 @@ public class SharedPreferencesAccountCredentialCache extends AbstractAccountCred
 
         for (Map.Entry<String, ?> cacheValue : cacheValues.entrySet()) {
             final String cacheKey = cacheValue.getKey();
-            if (isAccount(cacheKey)) {
+            if (isAccount(cacheKey) && cacheValue.getValue() != null) {
                 final AccountRecord account = mCacheValueDelegate.fromCacheValue(
                         cacheValue.getValue().toString(),
                         AccountRecord.class
@@ -210,6 +210,8 @@ public class SharedPreferencesAccountCredentialCache extends AbstractAccountCred
                 } else {
                     accounts.put(cacheKey, account);
                 }
+            } else if (cacheValue.getValue() == null) {
+                Logger.warn(TAG, "caught msal nullpointer error");
             }
         }
 
@@ -258,7 +260,7 @@ public class SharedPreferencesAccountCredentialCache extends AbstractAccountCred
 
         for (Map.Entry<String, ?> cacheValue : cacheValues.entrySet()) {
             final String cacheKey = cacheValue.getKey();
-            if (isCredential(cacheKey)) {
+            if (isCredential(cacheKey) && cacheValue.getValue() != null) {
                 final Credential credential = mCacheValueDelegate.fromCacheValue(
                         cacheValue.getValue().toString(),
                         credentialClassForType(cacheKey)
@@ -272,6 +274,8 @@ public class SharedPreferencesAccountCredentialCache extends AbstractAccountCred
                 } else {
                     credentials.put(cacheKey, credential);
                 }
+            } else if (cacheValue.getValue() == null) {
+                Logger.warn(TAG, "caught msal nullpointer error");
             }
         }
 
